@@ -1,0 +1,16 @@
+{
+  "key": "example_books",
+  "name": "Books to Scrape (körbart exempel/mall)",
+  "base_url": "http://books.toscrape.com/catalogue/page-1.html",
+  "link_selector": "article.product_pod h3 a",
+  "extractor": "generic",
+  "pagination": {
+    "type": "url_pattern",
+    "url_template": "http://books.toscrape.com/catalogue/page-{page}.html",
+    "start": 1,
+    "max_pages": 50
+  },
+  "render_js": false,
+  "request_delay_range": [1, 2],
+  "title_field": "Title"
+}

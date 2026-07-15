@@ -1,0 +1,52 @@
+name: Kör skrapor för alla konfigurerade sajter
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Installera Python-beroenden
+        run: pip install -r requirements.txt
+
+      - name: Installera Playwright (Chromium)
+        run: playwright install --with-deps chromium
+
+      - name: Kör step1-step3 för varje sajt i sites/ (utom exempelmallar)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          NOTIFY_KEYWORDS: ${{ vars.NOTIFY_KEYWORDS }}
+        run: |
+          set -e
+          for config in sites/*.json; do
+            case "$(basename "$config")" in
+              example_*) echo "Hoppar över exempelmall: $config"; continue ;;
+            esac
+            echo "=== $config ==="
+            python scraper.py step1 "$config"
+            python scraper.py step2 "$config"
+            python scraper.py step3 "$config"
+          done
+
+      - name: Committa uppdaterad data tillbaka till repot
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/ docs/data/
+          git diff --cached --quiet || git commit -m "Automatisk uppdatering av skrapad data"
+          git push

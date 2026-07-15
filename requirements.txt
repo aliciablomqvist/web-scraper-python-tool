@@ -1,0 +1,9 @@
+playwright
+beautifulsoup4
+requests
+pandas
+openpyxl
+reportlab
+fake-useragent
+python-dotenv
+supabase
