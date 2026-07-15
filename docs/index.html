@@ -5,59 +5,70 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>WebScraper</title>
 <meta name="description" content="Configuration-driven scraping engine: Playwright/BeautifulSoup, SQLite/Supabase, Excel/PDF export, Discord alerts, and GitHub Actions scheduling." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital@0;1&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 <div class="wrap">
 
-  <header class="hero window">
-    <div class="titlebar">
-      <span class="filename">generic_scraper.py</span>
-      <span class="controls"><span>▾</span><span>×</span></span>
-    </div>
-    <div class="window-body">
-      <div class="eyebrow">Python · Playwright · SQLite/Supabase · GitHub Actions</div>
-      <h1>Website<br />scraper engine</h1>
-      <div class="hero-grid">
-        <div>
-          <p>
-           A configuration-driven pipeline that can scrape any website, keep a change history, export Excel/PDF reports, and send Discord alerts when something new appears — all fully automated with a free GitHub Actions cron job.
-This page shows live data from one of the configured sites (a documentary catalogue).
-          </p>
-          <div class="hero-links">
-            <a class="btn primary" href="https://github.com/aliciablomqvist/nomads-scraper" target="_blank" rel="noopener">Source on GitHub</a>
-            <a class="btn" href="#architecture">Architecture ↓</a>
-            <a class="btn" href="#data">Data ↓</a>
-          </div>
-        </div>
-        <div class="window pseudo-code">
-          <div class="titlebar">
-            <span class="filename">site.json</span>
-            <span class="controls"><span>▾</span><span>×</span></span>
-          </div>
-          <pre><span class="kw">class</span> Site {
-  <span class="kw">function</span> <span class="fn">Scrape</span>(url);
-    { rows <span class="op">+=</span> <span class="fn">extract</span>(url); }
-  y <span class="op">=</span> <span class="fn">export</span>(rows, format);
-  y;
-}</pre>
+  <header class="hero">
+    <nav class="top-nav">
+      <span class="brand">generic_scraper.py</span>
+      <div class="nav-links">
+        <a href="#data">Data</a>
+        <a href="#architecture">Architecture</a>
+        <a href="https://github.com/aliciablomqvist/nomads-scraper" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </nav>
+
+    <div class="hero-grid">
+      <div class="hero-visual">
+        <div class="hero-blob" aria-hidden="true"></div>
+        <div class="eyebrow">Python · Playwright · SQLite/Supabase · GitHub Actions</div>
+        <h1>Website<br />scraper<br />engine</h1>
+      </div>
+
+      <div class="hero-side">
+        <ul class="meta-list">
+          <li class="meta-label">Stack</li>
+          <li class="meta-value">Python &amp; Playwright</li>
+          <li class="meta-label">Pipeline</li>
+          <li class="meta-label">Archive</li>
+          <li><a class="meta-label" href="https://github.com/aliciablomqvist/nomads-scraper" target="_blank" rel="noopener">Source</a></li>
+        </ul>
+
+        <p>A configuration-driven pipeline that can scrape any website, keep a change history, export Excel/PDF reports, and send Discord alerts when something new appears — all fully automated with a free GitHub Actions cron job.</p>
+        <p>This page shows live data from one of the configured sites (a documentary catalogue).</p>
+
+        <div class="hero-links">
+          <a class="btn primary" href="#data">View data ↓</a>
+          <a class="btn" href="https://github.com/aliciablomqvist/nomads-scraper" target="_blank" rel="noopener">Source on GitHub</a>
         </div>
       </div>
     </div>
   </header>
 
+  <section class="statement">
+    <div class="statement-art" aria-hidden="true"></div>
+    <p class="statement-text">Data doesn't guess, <em>this pipeline</em> does not either.</p>
+    <p class="statement-sub">Every row is driven by configuration, history, and a scheduled cron job.</p>
+    <a class="btn light" href="#data">View the data</a>
+  </section>
+
   <section class="stats">
-    <div class="stat-card window">
-      <div class="titlebar"><span class="filename">rows.txt</span><span class="controls"><span>×</span></span></div>
-      <div class="window-body"><div class="value" id="stat-total-rows">–</div><div class="label">Total rows scraped</div></div>
+    <div class="stat-card">
+      <span class="stat-label">Total rows scraped</span>
+      <div class="value" id="stat-total-rows">–</div>
     </div>
-    <div class="stat-card window">
-      <div class="titlebar"><span class="filename">sites.txt</span><span class="controls"><span>×</span></span></div>
-      <div class="window-body"><div class="value" id="stat-total-sites">–</div><div class="label">Configured sites</div></div>
+    <div class="stat-card">
+      <span class="stat-label">Configured sites</span>
+      <div class="value" id="stat-total-sites">–</div>
     </div>
-    <div class="stat-card window">
-      <div class="titlebar"><span class="filename">updated.txt</span><span class="controls"><span>×</span></span></div>
-      <div class="window-body"><div class="value" id="stat-updated">–</div><div class="label">Last updated</div></div>
+    <div class="stat-card">
+      <span class="stat-label">Last updated</span>
+      <div class="value" id="stat-updated">–</div>
     </div>
   </section>
 
