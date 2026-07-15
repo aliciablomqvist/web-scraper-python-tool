@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>WebScraper — generic scraping engine</title>
+<title>WebScraper</title>
 <meta name="description" content="Configuration-driven scraping engine: Playwright/BeautifulSoup, SQLite/Supabase, Excel/PDF export, Discord alerts, and GitHub Actions scheduling." />
 <link rel="stylesheet" href="style.css" />
 </head>
@@ -17,14 +17,12 @@
     </div>
     <div class="window-body">
       <div class="eyebrow">Python · Playwright · SQLite/Supabase · GitHub Actions</div>
-      <h1>Generic<br />scraper engine</h1>
+      <h1>Website<br />scraper engine</h1>
       <div class="hero-grid">
         <div>
           <p>
-            A configuration-driven pipeline that scrapes any website, keeps history,
-            exports Excel/PDF reports, and sends Discord alerts on new hits —
-            fully automated via a free GitHub Actions cron job. This page shows
-            live data from one of the configured sites (a documentary catalogue).
+           A configuration-driven pipeline that can scrape any website, keep a change history, export Excel/PDF reports, and send Discord alerts when something new appears — all fully automated with a free GitHub Actions cron job.
+This page shows live data from one of the configured sites (a documentary catalogue).
           </p>
           <div class="hero-links">
             <a class="btn primary" href="https://github.com/aliciablomqvist/nomads-scraper" target="_blank" rel="noopener">Source on GitHub</a>
@@ -125,12 +123,9 @@
           .edge-d { stroke: var(--accent-4); marker-end: url(#arrow-d); }
         </style>
 
-        <!-- inputs: flow into the hub -->
         <path class="edge edge-b" d="M520,88 Q560,165 520,238" />
         <path class="edge edge-c" d="M270,158 Q380,190 460,255" />
         <path class="edge edge-d" d="M760,158 Q660,190 580,255" />
-
-        <!-- outputs: flow out of the hub -->
         <path class="edge edge-a" d="M438,320 Q330,300 220,320" />
         <path class="edge edge-d" d="M602,320 Q710,300 820,320" />
         <path class="edge edge-b" d="M460,385 Q370,450 275,488" />
