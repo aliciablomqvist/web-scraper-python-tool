@@ -1,45 +1,77 @@
 <!doctype html>
-<html lang="sv">
+<html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>WebScraper — generisk skrapmotor</title>
-<meta name="description" content="Konfigurationsdriven skrapmotor: Playwright/BeautifulSoup, SQLite/Supabase, Excel/PDF-export, Discord-notiser och GitHub Actions-schemaläggning." />
+<title>WebScraper — generic scraping engine</title>
+<meta name="description" content="Configuration-driven scraping engine: Playwright/BeautifulSoup, SQLite/Supabase, Excel/PDF export, Discord alerts, and GitHub Actions scheduling." />
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 <div class="wrap">
 
-  <header class="hero">
-    <div class="eyebrow">Python · Playwright · SQLite/Supabase · GitHub Actions</div>
-    <h1>Generisk skrapmotor</h1>
-    <p>
-      En konfigurationsdriven pipeline som skrapar valfri webbsajt, lagrar historik,
-      exporterar Excel/PDF-rapporter och skickar Discord-notiser om nya träffar —
-      helt automatiserat via ett gratis GitHub Actions cron-jobb. Den här sidan
-      visar upp live-data från en av de konfigurerade sajterna (en filmkatalog).
-    </p>
-    <div class="hero-links">
-      <a class="btn primary" href="https://github.com/aliciablomqvist/nomads-scraper" target="_blank" rel="noopener">Källkod på GitHub</a>
-      <a class="btn" href="#architecture">Arkitektur ↓</a>
-      <a class="btn" href="#data">Data ↓</a>
+  <header class="hero window">
+    <div class="titlebar">
+      <span class="filename">generic_scraper.py</span>
+      <span class="controls"><span>▾</span><span>×</span></span>
+    </div>
+    <div class="window-body">
+      <div class="eyebrow">Python · Playwright · SQLite/Supabase · GitHub Actions</div>
+      <h1>Generic<br />scraper engine</h1>
+      <div class="hero-grid">
+        <div>
+          <p>
+            A configuration-driven pipeline that scrapes any website, keeps history,
+            exports Excel/PDF reports, and sends Discord alerts on new hits —
+            fully automated via a free GitHub Actions cron job. This page shows
+            live data from one of the configured sites (a documentary catalogue).
+          </p>
+          <div class="hero-links">
+            <a class="btn primary" href="https://github.com/aliciablomqvist/nomads-scraper" target="_blank" rel="noopener">Source on GitHub</a>
+            <a class="btn" href="#architecture">Architecture ↓</a>
+            <a class="btn" href="#data">Data ↓</a>
+          </div>
+        </div>
+        <div class="window pseudo-code">
+          <div class="titlebar">
+            <span class="filename">site.json</span>
+            <span class="controls"><span>▾</span><span>×</span></span>
+          </div>
+          <pre><span class="kw">class</span> Site {
+  <span class="kw">function</span> <span class="fn">Scrape</span>(url);
+    { rows <span class="op">+=</span> <span class="fn">extract</span>(url); }
+  y <span class="op">=</span> <span class="fn">export</span>(rows, format);
+  y;
+}</pre>
+        </div>
+      </div>
     </div>
   </header>
 
   <section class="stats">
-    <div class="stat-card"><div class="value" id="stat-total-rows">–</div><div class="label">Skrapade rader totalt</div></div>
-    <div class="stat-card"><div class="value" id="stat-total-sites">–</div><div class="label">Konfigurerade sajter</div></div>
-    <div class="stat-card"><div class="value" id="stat-updated">–</div><div class="label">Senast uppdaterad</div></div>
+    <div class="stat-card window">
+      <div class="titlebar"><span class="filename">rows.txt</span><span class="controls"><span>×</span></span></div>
+      <div class="window-body"><div class="value" id="stat-total-rows">–</div><div class="label">Total rows scraped</div></div>
+    </div>
+    <div class="stat-card window">
+      <div class="titlebar"><span class="filename">sites.txt</span><span class="controls"><span>×</span></span></div>
+      <div class="window-body"><div class="value" id="stat-total-sites">–</div><div class="label">Configured sites</div></div>
+    </div>
+    <div class="stat-card window">
+      <div class="titlebar"><span class="filename">updated.txt</span><span class="controls"><span>×</span></span></div>
+      <div class="window-body"><div class="value" id="stat-updated">–</div><div class="label">Last updated</div></div>
+    </div>
   </section>
 
   <section id="data">
-    <h2>Skrapad data</h2>
-    <p class="section-sub">Live-vy genererad direkt från samma data.csv som Excel/PDF-exporterna bygger på.</p>
+    <h2>Scraped data</h2>
+    <p class="section-sub">Live view generated directly from the same data.csv the Excel/PDF exports are built from.</p>
 
     <div class="panel" id="data-panel">
       <div class="controls">
-        <select id="site-select"></select>
-        <input type="search" id="search" placeholder="Sök i alla kolumner…" />
+        <div class="site-tabs" id="site-tabs"></div>
+        <select id="site-select" class="visually-hidden" aria-hidden="true" tabindex="-1"></select>
+        <input type="search" id="search" placeholder="Search all columns…" />
       </div>
       <div class="table-scroll">
         <table>
@@ -51,107 +83,113 @@
 
       <div class="chart-row" style="margin-top: 28px;">
         <div>
-          <h2 id="chart-title" style="font-size: 15px;">Fördelning</h2>
+          <h2 id="chart-title" style="font-size: 15px;">Breakdown</h2>
           <div id="chart"></div>
         </div>
       </div>
     </div>
     <div class="empty-state" id="empty-state" style="display:none;">
-      Ingen data hittad ännu. Kör <code>python scraper.py step3 sites/&lt;namn&gt;.json</code>
-      för att generera docs/data/.
+      No data found yet. Run <code>python scraper.py step3 sites/&lt;name&gt;.json</code>
+      to generate docs/data/.
     </div>
   </section>
 
   <section id="architecture">
-    <h2>Arkitektur</h2>
-    <p class="section-sub">Samma pipeline körs för alla konfigurerade sajter, oberoende av vilken hemsida som skrapas.</p>
+    <h2>Architecture</h2>
+    <p class="section-sub">The same pipeline runs for every configured site, regardless of which website is being scraped.</p>
     <div class="panel">
-      <svg viewBox="0 0 1040 610" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Arkitekturdiagram över skrapmotorns pipeline">
+      <svg viewBox="0 0 1040 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Architecture diagram of the scraper pipeline, drawn as a hub with spokes">
         <defs>
-          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-            <path d="M0,0 L10,5 L0,10 z" fill="var(--accent-2)" />
-          </marker>
+          <marker id="arrow-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent)" /></marker>
+          <marker id="arrow-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent-2)" /></marker>
+          <marker id="arrow-c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent-3)" /></marker>
+          <marker id="arrow-d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--accent-4)" /></marker>
         </defs>
 
         <style>
-          .node rect { fill: var(--bg); stroke: var(--border); stroke-width: 1.5; }
-          .node.accent rect { stroke: var(--accent); }
-          .node text { fill: var(--text); font-family: var(--sans); }
-          .node .title { font-weight: 700; font-size: 14px; }
-          .node .sub { fill: var(--text-dim); font-size: 11.5px; }
-          .edge { stroke: var(--accent-2); stroke-width: 1.6; fill: none; marker-end: url(#arrow); opacity: 0.85; }
+          .node rect { fill: var(--bg-elevated); stroke-width: 1.8; rx: 12; }
+          .node text { font-family: var(--sans); }
+          .node .title { fill: var(--text); font-weight: 700; font-size: 13px; }
+          .node .sub { fill: var(--text-dim); font-size: 11px; }
+          .node-a rect { stroke: var(--accent); filter: drop-shadow(0 0 5px var(--accent)); }
+          .node-b rect { stroke: var(--accent-2); filter: drop-shadow(0 0 5px var(--accent-2)); }
+          .node-c rect { stroke: var(--accent-3); filter: drop-shadow(0 0 5px var(--accent-3)); }
+          .node-d rect { stroke: var(--accent-4); filter: drop-shadow(0 0 5px var(--accent-4)); }
+          .hub circle { fill: var(--bg-elevated); stroke: var(--accent); stroke-width: 2.5; filter: drop-shadow(0 0 10px var(--accent)); }
+          .hub text.title { fill: var(--text); font-family: var(--sans); font-weight: 800; font-size: 15px; }
+          .hub text.sub { fill: var(--text-dim); font-family: var(--sans); font-size: 10.5px; }
+          .edge { fill: none; stroke-width: 1.8; opacity: 0.85; }
+          .edge-a { stroke: var(--accent); marker-end: url(#arrow-a); }
+          .edge-b { stroke: var(--accent-2); marker-end: url(#arrow-b); }
+          .edge-c { stroke: var(--accent-3); marker-end: url(#arrow-c); }
+          .edge-d { stroke: var(--accent-4); marker-end: url(#arrow-d); }
         </style>
 
-        <g class="node accent">
-          <rect x="370" y="10" width="300" height="54" rx="10" />
-          <text x="520" y="33" text-anchor="middle" class="title">GitHub Actions</text>
-          <text x="520" y="50" text-anchor="middle" class="sub">cron · 06:00 dagligen + manuell körning</text>
+        <!-- inputs: flow into the hub -->
+        <path class="edge edge-b" d="M520,88 Q560,165 520,238" />
+        <path class="edge edge-c" d="M270,158 Q380,190 460,255" />
+        <path class="edge edge-d" d="M760,158 Q660,190 580,255" />
+
+        <!-- outputs: flow out of the hub -->
+        <path class="edge edge-a" d="M438,320 Q330,300 220,320" />
+        <path class="edge edge-d" d="M602,320 Q710,300 820,320" />
+        <path class="edge edge-b" d="M460,385 Q370,450 275,488" />
+        <path class="edge edge-c" d="M520,402 Q520,480 520,548" />
+        <path class="edge edge-a" d="M580,385 Q670,450 765,488" />
+
+        <g class="node node-b">
+          <rect x="400" y="32" width="240" height="56" />
+          <text x="520" y="55" text-anchor="middle" class="title">GitHub Actions</text>
+          <text x="520" y="72" text-anchor="middle" class="sub">cron · 06:00 daily + manual run</text>
+        </g>
+        <g class="node node-c">
+          <rect x="50" y="102" width="220" height="56" />
+          <text x="160" y="126" text-anchor="middle" class="title">sites/nomads.json</text>
+          <text x="160" y="143" text-anchor="middle" class="sub">configuration</text>
+        </g>
+        <g class="node node-d">
+          <rect x="760" y="102" width="240" height="56" />
+          <text x="880" y="126" text-anchor="middle" class="title">sites/&lt;your site&gt;.json</text>
+          <text x="880" y="143" text-anchor="middle" class="sub">configuration · no code needed</text>
         </g>
 
-        <g class="node">
-          <rect x="40" y="115" width="220" height="52" rx="10" />
-          <text x="150" y="137" text-anchor="middle" class="title" font-size="13">sites/nomads.json</text>
-          <text x="150" y="153" text-anchor="middle" class="sub">konfiguration</text>
-        </g>
-        <g class="node">
-          <rect x="290" y="115" width="220" height="52" rx="10" />
-          <text x="400" y="137" text-anchor="middle" class="title" font-size="13">sites/example_*.json</text>
-          <text x="400" y="153" text-anchor="middle" class="sub">konfiguration</text>
-        </g>
-        <g class="node">
-          <rect x="540" y="115" width="220" height="52" rx="10" />
-          <text x="650" y="137" text-anchor="middle" class="title" font-size="13">sites/&lt;din nya sajt&gt;.json</text>
-          <text x="650" y="153" text-anchor="middle" class="sub">konfiguration</text>
+        <g class="hub">
+          <circle cx="520" cy="320" r="82" />
+          <text x="520" y="310" text-anchor="middle" class="title">scraper.py</text>
+          <text x="520" y="328" text-anchor="middle" class="sub">step1 → step2 → step3</text>
+          <text x="520" y="343" text-anchor="middle" class="sub">generic engine</text>
         </g>
 
-        <g class="node accent">
-          <rect x="240" y="215" width="560" height="78" rx="12" />
-          <text x="520" y="240" text-anchor="middle" class="title">scraper.py — generisk motor</text>
-          <text x="520" y="260" text-anchor="middle" class="sub">step1: samla URL:er (Playwright-klick / URL-mönster / enkel sida)</text>
-          <text x="520" y="277" text-anchor="middle" class="sub">step2: extrahera fält (generic_extract eller egen extraktor)</text>
+        <g class="node node-a">
+          <rect x="10" y="292" width="210" height="56" />
+          <text x="115" y="316" text-anchor="middle" class="title" font-size="12.5">data/&lt;site&gt;/data.csv</text>
+          <text x="115" y="332" text-anchor="middle" class="sub">raw export</text>
         </g>
-
-        <g class="node">
-          <rect x="390" y="330" width="260" height="50" rx="10" />
-          <text x="520" y="360" text-anchor="middle" class="title" font-size="13">data/&lt;sajt&gt;/data.csv</text>
+        <g class="node node-d">
+          <rect x="820" y="292" width="210" height="56" />
+          <text x="925" y="316" text-anchor="middle" class="title" font-size="12.5">Discord webhook</text>
+          <text x="925" y="332" text-anchor="middle" class="sub">notify.py · new rows</text>
         </g>
-
-        <g class="node">
-          <rect x="40" y="430" width="260" height="66" rx="10" />
-          <text x="170" y="455" text-anchor="middle" class="title" font-size="13">SQLite + Supabase</text>
-          <text x="170" y="472" text-anchor="middle" class="sub">historik · vilka rader är nya</text>
+        <g class="node node-b">
+          <rect x="45" y="488" width="230" height="64" />
+          <text x="160" y="514" text-anchor="middle" class="title" font-size="12.5">SQLite + Supabase</text>
+          <text x="160" y="530" text-anchor="middle" class="sub">history · which rows are new</text>
         </g>
-        <g class="node">
-          <rect x="390" y="430" width="260" height="66" rx="10" />
-          <text x="520" y="455" text-anchor="middle" class="title" font-size="13">Excel + PDF</text>
-          <text x="520" y="472" text-anchor="middle" class="sub">exporters.py · handläggarvänligt</text>
+        <g class="node node-c">
+          <rect x="400" y="548" width="240" height="64" />
+          <text x="520" y="574" text-anchor="middle" class="title" font-size="12.5">Excel + PDF</text>
+          <text x="520" y="590" text-anchor="middle" class="sub">exporters.py · reviewer-friendly</text>
         </g>
-        <g class="node">
-          <rect x="740" y="430" width="260" height="66" rx="10" />
-          <text x="870" y="455" text-anchor="middle" class="title" font-size="13">docs/data/*.json</text>
-          <text x="870" y="472" text-anchor="middle" class="sub">den här sidan · GitHub Pages</text>
+        <g class="node node-a">
+          <rect x="765" y="488" width="230" height="64" />
+          <text x="880" y="514" text-anchor="middle" class="title" font-size="12.5">docs/data/*.json</text>
+          <text x="880" y="530" text-anchor="middle" class="sub">this page · GitHub Pages</text>
         </g>
-
-        <g class="node">
-          <rect x="40" y="540" width="260" height="52" rx="10" />
-          <text x="170" y="562" text-anchor="middle" class="title" font-size="13">Discord-webhook</text>
-          <text x="170" y="578" text-anchor="middle" class="sub">notify.py · nya rader / nyckelord</text>
-        </g>
-
-        <path class="edge" d="M520,64 L520,110" />
-        <path class="edge" d="M150,167 L400,215" />
-        <path class="edge" d="M400,167 L490,215" />
-        <path class="edge" d="M650,167 L620,215" />
-        <path class="edge" d="M520,293 L520,325" />
-        <path class="edge" d="M480,380 L200,425" />
-        <path class="edge" d="M520,380 L520,425" />
-        <path class="edge" d="M580,380 L840,425" />
-        <path class="edge" d="M170,496 L170,535" />
       </svg>
       <p class="arch-caption">
-        Lägg till en ny sajt genom att skriva en JSON-fil i <code>sites/</code> —
-        oftast räcker det, ingen kod behöver skrivas (<code>extractor: "generic"</code>
-        läser av titel, meta-beskrivning och "Label: värde"-mönster automatiskt).
+        Add a new site by writing a JSON file in <code>sites/</code> — that's usually
+        enough, no code required (<code>extractor: "generic"</code> auto-detects
+        title, meta description, and "Label: value" patterns).
       </p>
     </div>
   </section>
@@ -168,7 +206,7 @@
       <span class="chip">GitHub Actions</span>
       <span class="chip">GitHub Pages</span>
     </div>
-    <span>Byggd som ett fristående, konfigurationsdrivet skrapramverk.</span>
+    <span>Built as a standalone, configuration-driven scraping framework.</span>
   </footer>
 
 </div>

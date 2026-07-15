@@ -5,6 +5,7 @@ const els = {
   totalSites: document.getElementById("stat-total-sites"),
   updated: document.getElementById("stat-updated"),
   siteSelect: document.getElementById("site-select"),
+  siteTabs: document.getElementById("site-tabs"),
   search: document.getElementById("search"),
   theadRow: document.getElementById("thead-row"),
   tbody: document.getElementById("tbody"),
@@ -37,7 +38,28 @@ async function main() {
   els.siteSelect.addEventListener("change", () => loadSite(els.siteSelect.value));
   els.search.addEventListener("input", render);
 
+  els.siteTabs.innerHTML = siteKeys
+    .map(
+      (k, i) =>
+        `<button type="button" class="site-tab" data-key="${k}"><span class="tab-label"><span class="idx">${String(i + 1).padStart(2, "0")}</span>${escapeHtml(manifest.sites[k].name)}</span></button>`
+    )
+    .join("");
+  els.siteTabs.addEventListener("click", (e) => {
+    const btn = e.target.closest(".site-tab");
+    if (!btn) return;
+    els.siteSelect.value = btn.dataset.key;
+    setActiveTab(btn.dataset.key);
+    loadSite(btn.dataset.key);
+  });
+  setActiveTab(siteKeys[0]);
+
   await loadSite(siteKeys[0]);
+}
+
+function setActiveTab(key) {
+  for (const tab of els.siteTabs.children) {
+    tab.classList.toggle("active", tab.dataset.key === key);
+  }
 }
 
 async function loadSite(key) {
@@ -51,7 +73,7 @@ async function loadSite(key) {
 function formatDate(iso) {
   if (!iso) return "-";
   const d = new Date(iso);
-  return d.toLocaleString("sv-SE", { dateStyle: "medium", timeStyle: "short" });
+  return d.toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" });
 }
 
 function filteredRows() {
@@ -77,7 +99,7 @@ function render() {
           .map((c) => {
             const value = row[c] ?? "";
             if (LINK_COLUMNS.has(c) && value) {
-              return `<td><a href="${escapeAttr(value)}" target="_blank" rel="noopener">Öppna länk</a></td>`;
+              return `<td><a href="${escapeAttr(value)}" target="_blank" rel="noopener">Open link</a></td>`;
             }
             return `<td title="${escapeAttr(String(value))}">${escapeHtml(truncate(String(value), 80))}</td>`;
           })
@@ -86,8 +108,8 @@ function render() {
     )
     .join("");
 
-  els.rowCount.textContent = `Visar ${shown.length} av ${rows.length} rader${
-    rows.length !== state.rows.length ? ` (filtrerat från ${state.rows.length})` : ""
+  els.rowCount.textContent = `Showing ${shown.length} of ${rows.length} rows${
+    rows.length !== state.rows.length ? ` (filtered from ${state.rows.length})` : ""
   }`;
 }
 
@@ -95,11 +117,11 @@ function renderChart() {
   const field = CHART_CANDIDATES.find((f) => state.rows.some((r) => r[f]));
   if (!field || !state.rows.length) {
     els.chart.innerHTML = "";
-    els.chartTitle.textContent = "Ingen kategorisk data hittad för diagram";
+    els.chartTitle.textContent = "No categorical data found for chart";
     return;
   }
 
-  els.chartTitle.textContent = `Fördelning: ${field}`;
+  els.chartTitle.textContent = `Breakdown: ${field}`;
 
   const counts = {};
   for (const row of state.rows) {
